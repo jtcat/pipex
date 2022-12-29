@@ -6,7 +6,7 @@
 /*   By: joaoteix <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/28 20:46:48 by joaoteix          #+#    #+#             */
-/*   Updated: 2022/12/29 08:38:17 by joaoteix         ###   ########.fr       */
+/*   Updated: 2022/12/29 09:14:15 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "utils.h"
@@ -99,18 +99,21 @@ int	main(int argc, char *argv[], char *envp[])
 		ft_dprintf(2, "pipex: %s: %s\n", strerror(errno), argv[1]);
 	pipe(pipefd);
 	dup2(fd, STDIN_FILENO);
-	i = 2;
-		dup2(pipefd[0], STDIN_FILENO);
 	dup2(pipefd[1], STDOUT_FILENO);
+	ft_proc_cmd(argv[2], path, envp);
+	close(fd);
+	dup2(pipefd[0], STDIN_FILENO);
+	i = 3;
 	while (i < (argc - 2))
-	{
-			ft_proc_cmd(argv[i++], path, envp);
-	}
+		ft_proc_cmd(argv[i++], path, envp);
+	close(pipefd[1]);
 	fd = open(argv[argc - 1], O_CREAT | O_WRONLY, O_FILE_MODE);
 	if (fd == -1)
 		ft_dprintf(2, "pipex: %s: %s\n", strerror(errno), argv[argc - 1]);
 	dup2(fd, STDOUT_FILENO);
 	ft_proc_cmd(argv[argc - 2], path, envp);
+	close(pipefd[0]);
+	close(fd);
 	ft_free_str_arr(path);
 	return (EXIT_SUCCESS);
 }
