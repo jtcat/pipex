@@ -3,117 +3,94 @@
 /*                                                        :::      ::::::::   */
 /*   ft_pipex.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joaoteix <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/12/28 20:46:48 by joaoteix          #+#    #+#             */
-/*   Updated: 2022/12/29 09:14:15 by joaoteix         ###   ########.fr       */
+/*   Created: 2023/02/22 10:02:10 by joaoteix          #+#    #+#             */
+/*   Updated: 2023/02/26 14:50:01 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "libft.h"
 #include "utils.h"
+#include <stdlib.h>
+#include <unistd.h>
 
-char	**ft_parse_path(char *envp[])
+// Close all pipes (should be called after using dup to copy necessary fds)
+void	close_pipes(t_pipecon *context)
 {
-	while (envp && !ft_strnstr(*envp, "PATH", 4))
-		envp++;
-	if (!envp)
+	int	i;
+
+	close(context->pipes[0][0]);
+	i = 1;
+	while (i < (context->pipe_n - 1))
 	{
-		ft_putstr_fd("pipex: PATH not defined\n", 2);
-		exit(EXIT_FAILURE);
+		close(context->pipes[i][0]);
+		close(context->pipes[i][1]);
+		i++;
 	}
-	return (ft_split(ft_strchr(*envp, '=') + 1, ':'));
+	close(context->pipes[context->pipe_n - 1][1]);
 }
 
-char	*ft_get_cmd_path(char *cmd, char **path)
+// Create pipes
+int	gen_pipes(t_pipecon *context, char *argv[], int argc, int append)
 {
-	char	*fullpath;
+	int	i;
 
-	cmd = ft_strjoin("/", cmd);
-	fullpath = NULL;
-	while (*path)
+	context->pipe_n = (argc - 2);
+	context->pipes = malloc(sizeof(int [2]) * context->pipe_n);
+	context->pipes[0][0] = open(argv[1], O_RDONLY | append);
+	if (context->pipes[0][0] == -1)
+		ft_dprintf(2, "pipex: %s: %s\n", strerror(errno), argv[1]);
+	i = 1;
+	while (i < (context->pipe_n - 1))
+		pipe(context->pipes[i++]);
+	context->pipes[i][1] = open(argv[argc - 1], FILE_FLAG | append, ACCESS_BITS);
+	if (context->pipes[i][1] == -1)
+		ft_dprintf(2, "pipex: %s: %s\n", strerror(errno), argv[argc - 1]);
+	return ((context->pipes[0][0] | context->pipes[i][1]) != -1);
+}
+
+int	exec_pipe_chain(t_pipecon *context, char *argv[], char *envp[])
+{
+	int			i;
+	int			pid;
+	char		**path;
+
+	path = ft_parse_path(envp);
+	i = 0;
+	while (i < (context->pipe_n - 1))
 	{
-		fullpath = ft_strjoin(*(path++), cmd);
-		if (!access(fullpath, X_OK))
-			break ;
-		free(fullpath);
-		fullpath = NULL;
-	}	
-	free(cmd);
-	return (fullpath);
-}
-
-void	ft_free_str_arr(char **arr)
-{
-	char	**iter;
-
-	iter = arr;
-	while (*(iter))
-		free(*(iter++));
-	free(arr);
-}
-
-void	ft_exec_cmd(char *cmd_path, char **argv, char *const envp[])
-{
-	pid_t	c_pid;
-
-	c_pid = fork();
-	if (c_pid == -1)
-		perror("fork");
-	if (c_pid == 0)
-	{
-		execve(cmd_path, argv, envp);
-		perror("execve");
+		context->pipe_i = i;
+		pid = ft_proc_cmd(context, argv[i], path, envp);
+		i++;
 	}
-	else
-		wait(&c_pid);
-}
-
-void	ft_proc_cmd(char *cmd_str, char **path, char *const envp[])
-{
-	char	**argv;
-	char	*cmd_path;
-
-	argv = ft_split(cmd_str, ' ');
-	cmd_path = ft_get_cmd_path(argv[0], path);
-	if (!cmd_path)
-		ft_dprintf(2, "pipex: Command not found: %s\n", argv[0]);
-	else
-	{
-		ft_exec_cmd(cmd_path, argv, envp);
-		free(cmd_path);
-	}
-	ft_free_str_arr(argv);
+	close_pipes(context);
+	ft_free_str_arr(path);
+	return (pid);
 }
 
 int	main(int argc, char *argv[], char *envp[])
 {
-	char	**path;
-	int		pipefd[2];
-	int		fd;
-	int		i;
+	int			wstatus;
+	int			last_pid;
+	int			append_flag;
+	t_pipecon	context;
 
+	append_flag = 0;
 	if (argc < 5)
 		return (EXIT_FAILURE);
-	path = ft_parse_path(envp);
-	fd = open(argv[1], O_RDONLY);
-	if (fd == -1)
-		ft_dprintf(2, "pipex: %s: %s\n", strerror(errno), argv[1]);
-	pipe(pipefd);
-	dup2(fd, STDIN_FILENO);
-	dup2(pipefd[1], STDOUT_FILENO);
-	ft_proc_cmd(argv[2], path, envp);
-	close(fd);
-	dup2(pipefd[0], STDIN_FILENO);
-	i = 3;
-	while (i < (argc - 2))
-		ft_proc_cmd(argv[i++], path, envp);
-	close(pipefd[1]);
-	fd = open(argv[argc - 1], O_CREAT | O_WRONLY, O_FILE_MODE);
-	if (fd == -1)
-		ft_dprintf(2, "pipex: %s: %s\n", strerror(errno), argv[argc - 1]);
-	dup2(fd, STDOUT_FILENO);
-	ft_proc_cmd(argv[argc - 2], path, envp);
-	close(pipefd[0]);
-	close(fd);
-	ft_free_str_arr(path);
-	return (EXIT_SUCCESS);
+	if (ft_strncmp(argv[1], APPEND_ARG, sizeof(APPEND_ARG)) == 0)
+	{
+		if (argc < 6)
+			return (EXIT_FAILURE);
+		append_flag = O_APPEND;
+	}
+	if (!gen_pipes(&context, argv, argc, append_flag))
+		return (EXIT_FAILURE);
+	last_pid = exec_pipe_chain(&context, argv + 2, envp);
+	free(context.pipes);
+	if (last_pid < 0)
+		return (EXIT_FAILURE);
+	waitpid(last_pid, &wstatus, 0);
+	return (WEXITSTATUS(wstatus));
 }

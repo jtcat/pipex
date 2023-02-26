@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joaoteix <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/12/28 20:52:35 by joaoteix          #+#    #+#             */
-/*   Updated: 2022/12/29 05:37:38 by joaoteix         ###   ########.fr       */
+/*   Created: 2023/02/23 10:37:08 by joaoteix          #+#    #+#             */
+/*   Updated: 2023/02/26 12:38:18 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,29 @@
 # include <unistd.h>
 # include "libft.h"
 
-# define O_FILE_MODE S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
+# define ACCESS_BITS S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
+# define FILE_FLAG	O_CREAT | O_WRONLY | O_TRUNC
+# define APPEND_ARG "here_doc"
+
+typedef struct s_pipecon
+{
+	int	pipe_i;
+	int	pipe_n;
+	int	(*pipes)[2];
+}	t_pipecon;
+
+void	ft_free_str_arr(char **arr);
+
+char	**ft_parse_path(char *envp[]);
+
+char	*ft_get_cmd_path(char *cmd, char **path);
+
+int		ft_exec_cmd(t_pipecon *context, char *cmd_path, \
+		char **argv, char *const envp[]);
+
+int		ft_proc_cmd(t_pipecon *context, char *cmd_str, \
+		char **path, char *const envp[]);
+
+void	close_pipes(t_pipecon *context);
 
 #endif

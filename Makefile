@@ -4,7 +4,7 @@ CFLAGS:= -O0 -g -Wall -Wextra -Werror
 
 NAME:= pipex
 
-SRC:= ft_pipex.c
+SRC:= ft_pipex.c exec_utils.c
 
 INC:= utils.h
 
@@ -39,5 +39,3 @@ clean:
 fclean:	clean
 	$(MAKE) -C $(LFT_DIR) fclean
 	$(RM) $(NAME)
-
-.PHONY: $(LFT)
