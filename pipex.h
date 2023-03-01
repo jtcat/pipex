@@ -1,18 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.h                                            :+:      :+:    :+:   */
+/*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 10:37:08 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/02/26 12:38:18 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/03/01 11:23:50 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef UTILS_H
 # define UTILS_H
 
+# include "libft.h"
 # include <stdio.h>
 # include <errno.h>
 # include <string.h>
@@ -21,14 +22,15 @@
 # include <sys/wait.h>
 # include <fcntl.h>
 # include <unistd.h>
-# include "libft.h"
 
 # define ACCESS_BITS S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
-# define FILE_FLAG	O_CREAT | O_WRONLY | O_TRUNC
+# define FILE_FLAG	O_CREAT | O_WRONLY
 # define APPEND_ARG "here_doc"
+# define HEREDOC_PROMPT "pipe heredoc>"
 
 typedef struct s_pipecon
 {
+	int	append;
 	int	pipe_i;
 	int	pipe_n;
 	int	(*pipes)[2];
@@ -47,5 +49,7 @@ int		ft_proc_cmd(t_pipecon *context, char *cmd_str, \
 		char **path, char *const envp[]);
 
 void	close_pipes(t_pipecon *context);
+
+void	read_here_doc(int pipe_in, char *terminator);
 
 #endif

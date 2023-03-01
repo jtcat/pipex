@@ -1,12 +1,12 @@
 CC:= cc
 
-CFLAGS:= -O0 -g -Wall -Wextra -Werror
+CFLAGS:= -Wall -Wextra -Werror
 
 NAME:= pipex
 
-SRC:= ft_pipex.c exec_utils.c
+SRC:= main.c utils.c
 
-INC:= utils.h
+INC:= pipex.h
 
 LFT_DIR:= libft
 

@@ -6,21 +6,35 @@
 /*   By: joaoteix <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 15:51:56 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/02/22 09:36:01 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/03/01 11:00:03 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
 # define LIBFT_H
 # include <stdlib.h>
+# include <unistd.h>
 
-//bruh
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 1000
+# endif
+
+typedef struct s_fbuff
+{
+	char	buff[BUFFER_SIZE];
+	ssize_t	head;
+	ssize_t	len;
+}				t_fbuffer;
+
 typedef struct s_list
 {
 	void			*content;
 	struct s_list	*next;
 }				t_list;
 
+ssize_t	parse_buff(char *buff, char *end, char **line, size_t *linelen);
+int		is_prevfd(int newfd);
+char	*get_next_line(int fd);
 int		ft_isalpha(int c);
 int		ft_isdigit(int c);
 int		ft_isalnum(int c);
@@ -57,10 +71,10 @@ char	*ft_strnstr(const char *big, const char *little, size_t len);
 void	ft_bzero(void *s, size_t n);
 void	*ft_calloc(size_t nmemb, size_t size);
 t_list	*ft_lstnew(void *content);
-void	ft_lstadd_front(t_list **lst, t_list *node);
+void	ft_lstadd_front(t_list **lst, t_list *new);
 int		ft_lstsize(t_list *lst);
 t_list	*ft_lstlast(t_list *lst);
-void	ft_lstadd_back(t_list **lst, t_list *node);
+void	ft_lstadd_back(t_list **lst, t_list *new);
 void	ft_lstdelone(t_list *lst, void (*del)(void *));
 void	ft_lstclear(t_list **lst, void (*del)(void *));
 void	ft_lstiter(t_list *list, void (*f)(void	*));

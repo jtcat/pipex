@@ -1,18 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec_utils.c                                       :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 10:40:38 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/02/26 14:27:18 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/03/01 11:23:38 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-#include "utils.h"
-#include <unistd.h>
+#include "pipex.h"
 
 // Free allocd string array
 void	ft_free_str_arr(char **arr)
@@ -100,7 +98,7 @@ int	ft_proc_cmd(t_pipecon *context, char *cmd_str, \
 		cmd_path = ft_get_cmd_path(cmd_tokens[0], path);
 	if (!cmd_path)
 		ft_dprintf(2, "pipex: Command not found: %s\n", cmd_tokens[0]);
-	else if (!access(cmd_tokens[0], X_OK))
+	else if (access(cmd_path, X_OK))
 		ft_dprintf(2, "pipex: Permission denied : %s\n", cmd_tokens[0]);
 	else
 		pid = ft_exec_cmd(context, cmd_path, cmd_tokens, envp);
