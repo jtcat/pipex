@@ -6,7 +6,7 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 10:02:10 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/03/20 20:49:22 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/03/20 22:35:52 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,14 +42,17 @@ int	gen_pipes(t_pipecon *context, char *argv[], int argc)
 	context->pipes = malloc(sizeof(int [2]) * context->pipe_n);
 	context->pipes[0][0] = open(argv[1], O_RDONLY);
 	if (context->pipes[0][0] == -1)
+	{
 		ft_dprintf(2, "pipex: %s: %s\n", strerror(errno), argv[1]);
+		context->pipes[0][0] = open("/dev/null", O_RDONLY);
+	}
 	i = 1;
 	while (i < (context->pipe_n - 1))
 		pipe(context->pipes[i++]);
 	context->pipes[i][1] = open(argv[argc - 1], FILE_FLAG | O_TRUNC, ACCESS_BITS);
 	if (context->pipes[i][1] == -1)
 		ft_dprintf(2, "pipex: %s: %s\n", strerror(errno), argv[argc - 1]);
-	return ((context->pipes[0][0] | context->pipes[i][1]) != -1);
+	return (context->pipes[i][1] != -1);
 }
 
 int	exec_pipe_chain(t_pipecon *context, char *argv[], char *envp[])
@@ -87,7 +90,7 @@ int	main(int argc, char *argv[], char *envp[])
 	close_pipes(&context);
 	free(context.pipes);
 	if (last_pid < 0)
-		return (EXIT_FAILURE);
+		return (127);
 	waitpid(last_pid, &wstatus, 0);
 	return (WEXITSTATUS(wstatus));
 }

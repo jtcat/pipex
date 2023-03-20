@@ -6,7 +6,7 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 10:02:10 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/03/20 21:07:54 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/03/20 22:37:02 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int	gen_pipes(t_pipecon *context, char *argv[], int argc)
 		context->pipes[i][1] = open(argv[argc - 1], FILE_FLAG | O_TRUNC, ACCESS_BITS);
 	if (context->pipes[i][1] == -1)
 		ft_dprintf(2, "pipex: %s: %s\n", strerror(errno), argv[argc - 1]);
-	return ((context->pipes[0][0] | context->pipes[i][1]) != -1);
+	return (context->pipes[i][1] != -1);
 }
 
 int	exec_pipe_chain(t_pipecon *context, char *argv[], char *envp[])
@@ -121,7 +121,7 @@ int	main(int argc, char *argv[], char *envp[])
 	close_pipes(&context);
 	free(context.pipes);
 	if (last_pid < 0)
-		return (EXIT_FAILURE);
+		return (127);
 	waitpid(last_pid, &wstatus, 0);
 	return (WEXITSTATUS(wstatus));
 }
