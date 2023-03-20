@@ -6,7 +6,7 @@ NAME:= pipex
 
 SRC:= main.c utils.c
 
-INC:= pipex.h
+SRC_BONUS:= main_bonus.c utils_bonus.c
 
 LFT_DIR:= libft
 
@@ -16,12 +16,17 @@ LFT_INC:= libft.h
 
 OBJ:= $(SRC:.c=.o)
 
+OBJ_BONUS:= $(SRC_BONUS:.c=.o)
+
 all: $(NAME)
+
+bonus: $(LFT) $(OBJ_BONUS)
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJ_BONUS) $(LFT)
 
 %.o:	%.c
 	$(CC) -c $(CFLAGS) -o $@ $<
 
-$(NAME): $(LFT)	$(INC) $(OBJ)
+$(NAME): $(LFT)	$(OBJ)
 	$(CC) $(CFLAGS) -o $@ $(OBJ) $(LFT)
 
 $(LFT_INC): $(LFT_DIR)/$(LFT_INC)
@@ -34,7 +39,7 @@ re:	fclean all
 
 clean:
 	$(MAKE) -C $(LFT_DIR) clean
-	$(RM) $(OBJ)
+	$(RM) $(OBJ) $(OBJ_BONUS)
 
 fclean:	clean
 	$(MAKE) -C $(LFT_DIR) fclean
