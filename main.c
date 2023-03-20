@@ -6,7 +6,7 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 10:02:10 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/03/01 11:23:21 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/03/20 20:49:22 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,22 +40,13 @@ int	gen_pipes(t_pipecon *context, char *argv[], int argc)
 
 	context->pipe_n = (argc - 2 - context->append);
 	context->pipes = malloc(sizeof(int [2]) * context->pipe_n);
-	if (context->append)
-	{
-		pipe(context->pipes[0]);
-		read_here_doc(context->pipes[0][1], argv[2]);
-	}
-	else
-		context->pipes[0][0] = open(argv[1], O_RDONLY);
+	context->pipes[0][0] = open(argv[1], O_RDONLY);
 	if (context->pipes[0][0] == -1)
 		ft_dprintf(2, "pipex: %s: %s\n", strerror(errno), argv[1]);
 	i = 1;
 	while (i < (context->pipe_n - 1))
 		pipe(context->pipes[i++]);
-	if (context->append)
-		context->pipes[i][1] = open(argv[argc - 1], FILE_FLAG | O_APPEND, ACCESS_BITS);
-	else
-		context->pipes[i][1] = open(argv[argc - 1], FILE_FLAG | O_TRUNC, ACCESS_BITS);
+	context->pipes[i][1] = open(argv[argc - 1], FILE_FLAG | O_TRUNC, ACCESS_BITS);
 	if (context->pipes[i][1] == -1)
 		ft_dprintf(2, "pipex: %s: %s\n", strerror(errno), argv[argc - 1]);
 	return ((context->pipes[0][0] | context->pipes[i][1]) != -1);
@@ -79,38 +70,13 @@ int	exec_pipe_chain(t_pipecon *context, char *argv[], char *envp[])
 	return (pid);
 }
 
-void	read_here_doc(int pipe_in, char *terminator)
-{
-	char	*line;
-	int		size;
-
-	size = ft_strlen(terminator);
-	ft_putstr_fd(HEREDOC_PROMPT, STDOUT_FILENO);
-	line = get_next_line(STDIN_FILENO);
-	while (line)
-	{
-		if (ft_strncmp(line, terminator, size) == 0 && line[size] == '\n')
-		{
-			free(line);
-			return ;
-		}
-		ft_putstr_fd(line, pipe_in);
-		free(line);
-		ft_putstr_fd(HEREDOC_PROMPT, STDOUT_FILENO);
-		line = get_next_line(STDIN_FILENO);
-	}
-}
-
 int	main(int argc, char *argv[], char *envp[])
 {
 	int			wstatus;
 	int			last_pid;
 	t_pipecon	context;
 
-	if (argc < 5)
-		return (EXIT_FAILURE);
-	context.append = ft_strncmp(argv[1], APPEND_ARG, ft_strlen(APPEND_ARG)) == 0;
-	if (context.append && argc < 6)
+	if (argc != 5)
 		return (EXIT_FAILURE);
 	if (!gen_pipes(&context, argv, argc))
 	{
