@@ -20,8 +20,9 @@ OBJ_BONUS:= $(SRC_BONUS:.c=.o)
 
 all: $(NAME)
 
-bonus: $(LFT) $(OBJ_BONUS)
+bonus: $(NAME) $(LFT) $(OBJ_BONUS)
 	$(CC) $(CFLAGS) -o $(NAME) $(OBJ_BONUS) $(LFT)
+	touch bonus
 
 %.o:	%.c
 	$(CC) -c $(CFLAGS) -o $@ $<

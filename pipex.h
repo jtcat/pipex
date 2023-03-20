@@ -6,12 +6,12 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 10:37:08 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/03/01 11:23:50 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/03/20 23:20:39 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef UTILS_H
-# define UTILS_H
+#ifndef PIPEX_H
+# define PIPEX_H
 
 # include "libft.h"
 # include <stdio.h>
@@ -23,8 +23,8 @@
 # include <fcntl.h>
 # include <unistd.h>
 
-# define ACCESS_BITS S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
-# define FILE_FLAG	O_CREAT | O_WRONLY
+# define ACCESS_BITS 420
+# define FILE_FLAG	577
 # define APPEND_ARG "here_doc"
 # define HEREDOC_PROMPT "pipe heredoc>"
 

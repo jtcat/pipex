@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   utils_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/23 10:40:38 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/03/18 19:22:50 by joaoteix         ###   ########.fr       */
+/*   Created: 2023/03/20 22:41:26 by joaoteix          #+#    #+#             */
+/*   Updated: 2023/03/20 22:41:34 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
 // Free allocd string array
 void	ft_free_str_arr(char **arr)

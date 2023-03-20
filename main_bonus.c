@@ -6,7 +6,7 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 10:02:10 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/03/20 22:45:00 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/03/20 23:21:08 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ int	gen_pipes(t_pipecon *context, char *argv[], int argc)
 {
 	int	i;
 
-	context->pipe_n = (argc - 2 - context->append);
 	context->pipes = malloc(sizeof(int [2]) * context->pipe_n);
 	if (context->append)
 	{
@@ -56,11 +55,9 @@ int	gen_pipes(t_pipecon *context, char *argv[], int argc)
 	while (i < (context->pipe_n - 1))
 		pipe(context->pipes[i++]);
 	if (context->append)
-		context->pipes[i][1] = open(argv[argc - 1], FILE_FLAG
-				| O_APPEND, ACCESS_BITS);
+		context->pipes[i][1] = open(argv[argc - 1], FILE_APPEND, ACCESS_BITS);
 	else
-		context->pipes[i][1] = open(argv[argc - 1], FILE_FLAG
-				| O_TRUNC, ACCESS_BITS);
+		context->pipes[i][1] = open(argv[argc - 1], FILE_TRUNC, ACCESS_BITS);
 	if (context->pipes[i][1] == -1)
 		ft_dprintf(2, "pipex: %s: %s\n", strerror(errno), argv[argc - 1]);
 	return (context->pipes[i][1] != -1);
@@ -118,6 +115,7 @@ int	main(int argc, char *argv[], char *envp[])
 			ft_strlen(APPEND_ARG)) == 0;
 	if (context.append && argc < 6)
 		return (EXIT_FAILURE);
+	context.pipe_n = (argc - 2 - context.append);
 	if (!gen_pipes(&context, argv, argc))
 	{
 		free(context.pipes);

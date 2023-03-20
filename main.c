@@ -6,7 +6,7 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 10:02:10 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/03/20 22:43:33 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/03/20 23:02:36 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,7 @@ int	gen_pipes(t_pipecon *context, char *argv[], int argc)
 	i = 1;
 	while (i < (context->pipe_n - 1))
 		pipe(context->pipes[i++]);
-	context->pipes[i][1] = open(argv[argc - 1], FILE_FLAG
-			| O_TRUNC, ACCESS_BITS);
+	context->pipes[i][1] = open(argv[argc - 1], FILE_FLAG, ACCESS_BITS);
 	if (context->pipes[i][1] == -1)
 		ft_dprintf(2, "pipex: %s: %s\n", strerror(errno), argv[argc - 1]);
 	return (context->pipes[i][1] != -1);
