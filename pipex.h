@@ -6,7 +6,7 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 10:37:08 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/03/20 23:20:39 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/04/28 15:50:02 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@
 
 typedef struct s_pipecon
 {
-	int	append;
 	int	pipe_i;
 	int	pipe_n;
 	int	(*pipes)[2];

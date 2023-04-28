@@ -6,7 +6,7 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 10:02:10 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/03/20 23:02:36 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/04/28 15:49:44 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,6 @@ void	close_pipes(t_pipecon *context)
 {
 	int	i;
 
-	if (context->append)
-		close(context->pipes[0][1]);
 	close(context->pipes[0][0]);
 	i = 1;
 	while (i < (context->pipe_n - 1))
@@ -38,7 +36,7 @@ int	gen_pipes(t_pipecon *context, char *argv[], int argc)
 {
 	int	i;
 
-	context->pipe_n = (argc - 2 - context->append);
+	context->pipe_n = (argc - 2);
 	context->pipes = malloc(sizeof(int [2]) * context->pipe_n);
 	context->pipes[0][0] = open(argv[1], O_RDONLY);
 	if (context->pipes[0][0] == -1)
@@ -66,7 +64,7 @@ int	exec_pipe_chain(t_pipecon *context, char *argv[], char *envp[])
 	while (i < (context->pipe_n - 1))
 	{
 		context->pipe_i = i;
-		pid = ft_proc_cmd(context, argv[i + 2 + context->append], path, envp);
+		pid = ft_proc_cmd(context, argv[i + 2], path, envp);
 		i++;
 	}
 	ft_free_str_arr(path);
