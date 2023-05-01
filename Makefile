@@ -20,7 +20,7 @@ OBJ_BONUS:= $(SRC_BONUS:.c=.o)
 
 all: $(NAME)
 
-bonus: $(NAME) $(LFT) $(OBJ_BONUS)
+bonus: $(LFT) $(OBJ_BONUS)
 	$(CC) $(CFLAGS) -o $(NAME) $(OBJ_BONUS) $(LFT)
 	touch bonus
 
@@ -44,4 +44,5 @@ clean:
 
 fclean:	clean
 	$(MAKE) -C $(LFT_DIR) fclean
+	$(RM) bonus
 	$(RM) $(NAME)
